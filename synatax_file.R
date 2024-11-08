@@ -4,23 +4,72 @@ v # Generic vector
 D # Generic data
 
 
-head(O)  #Shows the beginning of most objects
-tail(O)  #Shows the end of most objects
-summary(O) #Shows a summary 
+
 
 
 M[,1]   #Take the first column of matrix M
 
+
+#### IO ####
+print()
+
+
+#### Objects ####
+# All variables are objects
+ls() #List all objects
+rm(x) #deletes x
+rm(list=ls()) #removes all objects
+
+head(O)  #Shows the beginning of most objects
+tail(O)  #Shows the end of most objects
+summary(O) #Shows a summary 
+
+#### LOOPS ####
+for(i in 1:trials){
+  # write your code here
+}
+
+
+
+#### VECTORS ####
+
+c(2,3,4) #Combine elements into vector
+numeric(3) #Creates 3 element zero vector
+
+seq(1, 100, 9) # Create vector 1 to 100 with step length 9
+1:100 # =seq(1, 1, 100)
+
+rep(1:3, t=3, e=4) # take the input vector 1:3 and take each element 3 times
+# And the entire vector 4 times
+
+
+x[1:2] #take value 1:2 from x
+x[-1:2] #take all values from x except 1:2
+
+
+
 #### MATRICES ####
+matrix(,nrow=2,ncol=3) # matrix with 2 rows and 3 columns
+A %*% B #Matrix multiplication
+
 rownames() # shows row names
 colnames() #Shoes the column names
 
 apply(M,1,sum) # Does the function sum over all rows of matrix z 
 apply(M,1,sum) # Does the function sum over all columns of matrix z 
 
+
+
 #### DATA MANIPULTAION ####
 cbind(M,v) #Add column vector v to end of M
 order(v,decreasing=TRUE) #Sort vector v in decreasing and returns the order they should have
+
+
+
+#### PSEUDO-RANDOM NUMBERS ####
+set.seed(123) #Sets the seed to 123
+
+
 
 #### STATISTICS ####
 mean(D) 
@@ -31,6 +80,7 @@ sd(D)
 t.test(D,D) #Does a t-test
 var.test(D,D) #Does a F-test
 wilcox.test(D,D) #Does a wilcox Rank sum test
+
 
 
 #### PLOTTING ####
@@ -58,3 +108,6 @@ graphics.off #Cloese all graphics
 windows()
 layout(matrix(1:2,nrow=1, ncol=2)) # Creates a subfigure where the 2 subsequent
                                    # figures will be saved
+
+
+
