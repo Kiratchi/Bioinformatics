@@ -2,17 +2,15 @@ O # Generic object
 M # Generic matrix
 v # Generic vector
 D # Generic data
+df #Generic data frame
 
 
-
-
-
-M[,1]   #Take the first column of matrix M
 
 
 #### IO ####
 print()
-
+write.table(data_file,file="data.txt",sep="\t") #Save the Data file with tab separation 
+read.table("https://tinyurl.com/y8av4xfn",header=TRUE, sep="\t")
 
 #### Objects ####
 # All variables are objects
@@ -23,6 +21,7 @@ rm(list=ls()) #removes all objects
 head(O)  #Shows the beginning of most objects
 tail(O)  #Shows the end of most objects
 summary(O) #Shows a summary 
+dim(o) #Shows the number of rows, columns etc in a vector
 
 #### LOOPS ####
 for(i in 1:trials){
@@ -32,6 +31,7 @@ for(i in 1:trials){
 
 
 #### VECTORS ####
+# Vectors contain only one data type
 
 c(2,3,4) #Combine elements into vector
 numeric(3) #Creates 3 element zero vector
@@ -49,16 +49,30 @@ x[-1:2] #take all values from x except 1:2
 
 
 #### MATRICES ####
-matrix(,nrow=2,ncol=3) # matrix with 2 rows and 3 columns
-A %*% B #Matrix multiplication
+# 2d matrices with only one data type
 
-rownames() # shows row names
-colnames() #Shoes the column names
+matrix(,nrow=2,ncol=3) # matrix with 2 rows and 3 columns
+
+A %*% B #Matrix multiplication
+t() #Transpose matrix
+
 
 apply(M,1,sum) # Does the function sum over all rows of matrix z 
 apply(M,1,sum) # Does the function sum over all columns of matrix z 
 
 
+
+#### DATA FRAMES ####
+#
+
+data.frame(name_a = v1, name_b = v2) #Creates a data frame
+
+rownames() # shows row names
+colnames() #Shows the column names
+rbind() # Add new row
+
+data_frame$name_a #Accesses column name_a
+data_frame[,1] #Access column 1
 
 #### DATA MANIPULTAION ####
 cbind(M,v) #Add column vector v to end of M
@@ -83,6 +97,15 @@ wilcox.test(D,D) #Does a wilcox Rank sum test
 
 
 
+
+#### LINEAR REGRESSION ####
+lm(y~x,data=df) #Creates a model E(y) = B0 + B1x from x & y in df
+lm(y~x-1,data=df) #Same but B0=0
+summary(mymodel) #Can summaries mymodel
+resid(mymodel) #List of residuals
+predict(mymodel, newdata) #Show model prediction for some data
+
+
 #### PLOTTING ####
 
 plot(d1, d2) # Creates a scatter plot of d2 over d1
@@ -94,6 +117,8 @@ plot(d1, d2) # Creates a scatter plot of d2 over d1
 # ylim : y min and y max in vector
 # cex : size of points  "cex.X" to edit "X"
 # col : color of points "col.X" to edit "X"
+
+abline(mymodel) #Plot fitted regression line
 
 hist(D) #Creates a histogram
 # break : number of bars
