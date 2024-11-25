@@ -134,5 +134,6 @@ windows()
 layout(matrix(1:2,nrow=1, ncol=2)) # Creates a subfigure where the 2 subsequent
                                    # figures will be saved
 
-
+library(xtable)
+xtable(summary(lm), caption = "Caption name", label = "label name") #Creates a latex tabel
 
