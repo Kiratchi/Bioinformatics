@@ -1,3 +1,5 @@
 Exercise 2/Data/
 Exercise 2/Figures/
 *.RData
+*.RDataTmp
+*.Rhistory
