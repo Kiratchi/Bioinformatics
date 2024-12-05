@@ -1,3 +1,5 @@
+# Definitions
+
 O # Generic object
 M # Generic matrix
 v # Generic vector
@@ -22,6 +24,11 @@ head(O)  #Shows the beginning of most objects
 tail(O)  #Shows the end of most objects
 summary(O) #Shows a summary 
 dim(o) #Shows the number of rows, columns etc in a vector
+
+
+#### Strings ####
+sprintf()
+
 
 #### LOOPS ####
 for(i in 1:trials){
