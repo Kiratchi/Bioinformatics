@@ -5,3 +5,5 @@ Exercise 2/Figures/
 *.Rhistory
 Exercise 3/Data/
 Exercise 3/Figures/
+*.txt
+*.png
