@@ -1,5 +1,8 @@
 library(ggplot2)
 library(tidyr)
+library(RColorBrewer)
+library(gplots)
+
 
 
 x = read.table("./Data/counts_matrix.txt")
@@ -42,8 +45,8 @@ ggplot(data=logCPM_long, aes(x=person_id, y = expression)) +
   labs(title = "Boxplot of Expression by Person - Normalized", 
        x = "Person ID", 
        y = "log(Expression)") +
-  theme(axis.text.x = element_text(angle = 60, hjust = 1))
-ggsave("./Figures/boxplot_normalized.png")
+  theme(axis.text.x = element_text(angle = 60, hjust = 1, size = 5))
+ggsave("./Figures/boxplot_normalized.png",  width = 20, height = 6, units = "cm")
 
 # Box-plot non-normalized data = x.filtered
 logx.filtered_long <- pivot_longer(logx.filtered, cols = everything(), names_to = "person_id", values_to = "expression")
@@ -53,16 +56,15 @@ ggplot(data=logx.filtered_long, aes(x=person_id, y = expression)) +
   labs(title = "Boxplot of Expression by Person - Non Normalized", 
        x = "Person ID", 
        y = "log(Expression)") +
-  theme(axis.text.x = element_text(angle = 60, hjust = 1))
-ggsave("./Figures/boxplot_non-normalized.png")
+  theme(axis.text.x = element_text(angle = 60, hjust = 1, size = 5))
+ggsave("./Figures/boxplot_non-normalized.png",  width = 20, height = 6, units = "cm")
 
 # Scatter plot sample 1 and 41
 ggplot(data=logCPM , aes(x=logCPM[,1] , y=logCPM[,41] )) + geom_point(size = 0.5) +
-  labs(title = "Scatter plot of sample 41 against sample 1", 
-       x = "log(expression) for Sample 1", 
+  labs( x = "log(expression) for Sample 1", 
        y = "log(expression) for Sample 41" ) +
-  geom_abline(aes(intercept = 0, slope = 1), color = "orange", alpha = 0.5, linewidth = 1)
-ggsave("./Figures/scatterplot_41_1.png")
+  geom_abline(aes(intercept = 0, slope = 1), color = "orange", linewidth = 0.5)
+ggsave("./Figures/scatterplot_41_1.png", width = 8, height = 8, units = "cm")
 
 
 gene1 <- data.frame(
@@ -77,8 +79,8 @@ colnames(gene1)[1] <- "logCPM_gene1"
 
 # Creating a boxplot for gene 1 to see if there is a 
 # difference between having the disease or not
-ggplot(data = gene1, aes(x = diagnosis, y = logCPM_gene1)) + 
-  geom_boxplot()
+ggplot(data = gene1, aes(x = diagnosis, y = logCPM_gene1, fill = diagnosis)) + 
+  geom_boxplot() + theme(legend.position = "none")
 ggsave("./Figures/boxplot_gene1.png")
 
 fit1 <- lm( logCPM_gene1 ~ diagnosis, data=gene1)
@@ -125,22 +127,23 @@ fit2_df$diagnosis_p_value_adj <-p.adjust(fit2_df$diagnosis_p_value, method="fdr"
 fit2_df$age_p_value_adj <- p.adjust(fit2_df$age_p_value, method="fdr")
 fit2_df$gender_p_value_adj <- p.adjust(fit2_df$gender_p_value, method="fdr")
 
+fit1_df <- fit1_df[order(fit1_df$p_value_adj), ]
 ggplot(data = fit1_df, aes(x = 1:nr_genes, y = -log10(p_value_adj))) + 
-  geom_point(size=0.1) + 
+  geom_point(size=0.7) + 
   geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "red") +
-  labs(title = "", 
-            x = "Gene", 
-            y = "-log10(p_adj)")
+  labs(x = "Significant Gene Order", 
+       y = "-log10(p_adj)")
 ggsave("./Figures/fit1_p_values.png")
 
+fit2_df <- fit2_df[order(fit1_df$p_value_adj), ]
 ggplot(data = fit2_df, aes(x = 1:nr_genes, y = -log10(diagnosis_p_value_adj))) + 
-  geom_point(size=0.1) + 
+  geom_point(size=0.7) + 
   geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "red") +
-  labs(title = "", 
-       x = "Gene", 
+  labs( x = "Significant Gene Order", 
        y = "-log10(p_adj)")
 ggsave("./Figures/fit2_diag_p_values.png")
 
+fit2_df <- fit2_df[order(fit2_df$age_p_value_adj), ]
 ggplot(data = fit2_df, aes(x = 1:nr_genes, y = -log10(age_p_value_adj))) + 
   geom_point(size=0.1) + 
   labs(title = "", 
@@ -167,8 +170,63 @@ print(sum(fit2_df$diagnosis_p_value_adj<0.05))
 print(sum(fit2_df$diagnosis_p_value_adj<0.05 & fit2_df$diagnosis_coef>0))
 print(sum(fit2_df$diagnosis_p_value_adj<0.05 & fit2_df$diagnosis_coef<0))
 
+print(sum(fit2_df$age_p_value_adj<0.05))
+print(sum(fit2_df$gender_p_value_adj<0.05))
+
+fit2_df <- fit2_df[order(fit2_df$age_p_value_adj), ]
+head(fit2_df)
+
+fit2_df <- fit2_df[order(fit2_df$gender_p_value_adj), ]
+head(fit2_df)
+
 
 fit1_df <- fit1_df[order(fit1_df$p_value_adj), ]
-most_significant_genes <- rownames(fit1_df)[1:5]
+most_significant_genes <- rownames(fit2_df)[1:5]
 print(gene_annotation[most_significant_genes, c("ensembl_gene_id", "description")])
 
+
+###### Heirarchical clustering ####
+fit2_df <- fit2_df[order(fit2_df$diagnosis_p_value_adj), ]
+genes_sig <- rownames(fit2_df[1:100,])
+logCPM_sig <- as.matrix(logCPM[genes_sig,])
+
+mypalette = brewer.pal(11,"RdYlBu")
+morecols = colorRampPalette(mypalette)
+mycols=rev(morecols(255))
+column_cols=c("#F8766D","#00BFC4")[metadata$diagnosis]
+
+
+
+pdf("./Figures/top100sigGenesHeatmap.pdf",height=9,width=10)
+heatmap.2(logCPM_sig,trace="none",col=mycols,main="The 100 most significant genes",ColSideColors=column_cols)
+dev.off()
+
+
+
+##### PCA ####
+pca=prcomp(t(logCPM))
+summary(pca)
+
+
+data <- data.frame(pca$x, Sex = metadata$Sex, Diagnosis = metadata$diagnosis)
+
+# Create the plot
+ggplot(data, aes(x = PC1, y = PC2, shape = Sex, color = Diagnosis)) +
+  geom_point(size = 4) +
+  labs(x = "PCA 1", y = "PCA 2") + 
+  scale_shape_manual(values = c(15, 8))
+ggsave("./Figures/pca_12_diagnosis.png")
+
+ggplot(data, aes(x = PC1, y = PC3, shape = Sex, color = Diagnosis)) +
+  geom_point(size = 4) +
+  labs(x = "PCA 1", y = "PCA 2") + 
+  scale_shape_manual(values = c(15, 8))
+ggsave("./Figures/pca_13_diagnosis.png")
+
+ggplot(data, aes(x = PC2, y = PC3, shape = Sex, color = Diagnosis)) +
+  geom_point(size = 4) +
+  labs(x = "PCA 1", y = "PCA 2") + 
+  scale_shape_manual(values = c(15, 8))
+ggsave("./Figures/pca_23_diagnosis.png")
+
+ggplot(data = pca, aes(x=))
