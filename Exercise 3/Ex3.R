@@ -215,18 +215,18 @@ ggplot(data, aes(x = PC1, y = PC2, shape = Sex, color = Diagnosis)) +
   geom_point(size = 4) +
   labs(x = "PCA 1", y = "PCA 2") + 
   scale_shape_manual(values = c(15, 8))
-ggsave("./Figures/pca_12_diagnosis.png")
+ggsave("./Figures/pca_12_diagnosis.png", height = 15, width = 12, units = "cm")
 
 ggplot(data, aes(x = PC1, y = PC3, shape = Sex, color = Diagnosis)) +
   geom_point(size = 4) +
-  labs(x = "PCA 1", y = "PCA 2") + 
+  labs(x = "PCA 1", y = "PCA 3") + 
   scale_shape_manual(values = c(15, 8))
-ggsave("./Figures/pca_13_diagnosis.png")
+ggsave("./Figures/pca_13_diagnosis.png", height = 15, width = 12, units = "cm")
 
 ggplot(data, aes(x = PC2, y = PC3, shape = Sex, color = Diagnosis)) +
   geom_point(size = 4) +
-  labs(x = "PCA 1", y = "PCA 2") + 
+  labs(x = "PCA 2", y = "PCA 3") + 
   scale_shape_manual(values = c(15, 8))
-ggsave("./Figures/pca_23_diagnosis.png")
+ggsave("./Figures/pca_23_diagnosis.png", height = 15, width = 12, units = "cm")
 
-ggplot(data = pca, aes(x=))
+
