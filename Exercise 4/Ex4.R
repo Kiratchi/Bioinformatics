@@ -2,6 +2,7 @@ library(ggplot2)
 library(tidyr)
 library(RColorBrewer)
 library(gplots)
+library(ggrepel)
 library(purrr)
 library(xtable)
 library(DESeq2)
@@ -147,10 +148,14 @@ gene_counts <- gene_counts[rowSums(gene_counts)>=5,]
 #### PCA #####
 pca=prcomp(t(gene_counts))
 summary(pca)
+# PC1 and PC2 account for most of the variation
+
 data <- data.frame(pca$x)
-# PC1 and PC2 acount for most of the variation
-ggplot(data, aes(y = PC2, x = PC1)) +
-  geom_point(aes(color = c("High", "High", "High", "Low", "Low", "Low")), size = 4) +
+data$label <- rownames(data)
+data$group <- c("High", "High", "High", "Low", "Low", "Low")
+ggplot(data, aes(x = PC1, y = PC2)) +
+  geom_point(aes(color = group), size = 4) +
+  geom_text_repel(aes(label = label), size = 3.5) +
   labs(color = "Oiliness")
 ggsave("./Figures/shotgun_pca_Oiliness.png", height = 6, width = 8, units = "cm")
 
@@ -158,11 +163,14 @@ ggsave("./Figures/shotgun_pca_Oiliness.png", height = 6, width = 8, units = "cm"
 pca=prcomp(t(log(1+gene_counts)))
 summary(pca)
 data <- data.frame(pca$x)
-# PC1 and PC2 acount for most of the variation
-ggplot(data, aes(y = PC2, x = PC1)) +
-  geom_point(aes(color = c("High", "High", "High", "Low", "Low", "Low")), size = 4) +
+data$label <- rownames(data)
+data$group <- c("High", "High", "High", "Low", "Low", "Low")
+ggplot(data, aes(x = PC1, y = PC2)) +
+  geom_point(aes(color = group), size = 4) +
+  geom_text_repel(aes(label = label),size = 3.5) +
   labs(color = "Oiliness")
 ggsave("./Figures/shotgun_pca_log_Oiliness.png", height = 6, width = 8, units = "cm")
+
 
 #### Rarefaction ####
 depth = min(colSums(gene_counts))
